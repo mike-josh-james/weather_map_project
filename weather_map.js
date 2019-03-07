@@ -99,6 +99,23 @@ var weatherObj = [ {
         center: [-98.4936, 29.4241]
     });
 
+    var search = "The Alamo";
+
+    $("#search-btn").on("click", function(){
+        var search = $("#search-man").val();
+        geocode(search, mapboxToken).then(function(data) {
+            long = data[0].toString();
+            lat = data[1].toString();
+            url = "https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/" + darkSkyToken + "/" + lat + "," + long;
+            $.get(url).done(function(weather) {
+                getWeather(weather);
+            });
+       })
+
+    });
+
+    geocode(search, mapboxToken).then(function(data) {
+
     function onDragEnd(){
         lat = marker.getLngLat().lat;
         long = marker.getLngLat().lng;
@@ -107,13 +124,15 @@ var weatherObj = [ {
             console.log(weather);
             getWeather(weather);
         });
-
     }
-    var marker = new mapboxgl.Marker();
-    marker.setLngLat([-98.4936, 29.4241]);
-    marker.addTo(map);
-    marker.setDraggable(true);
-    marker.on("dragend", onDragEnd);
+
+        var marker = new mapboxgl.Marker();
+        marker.setLngLat(data);
+        marker.addTo(map);
+        marker.setDraggable(true);
+        marker.on("dragend", onDragEnd);
+
+    });
 
 
 
