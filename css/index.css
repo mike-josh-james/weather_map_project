@@ -62,3 +62,8 @@ body{
 #icon {
     text-align: center;
 }
+
+.city{
+    font-size: 2em;
+    margin-top: -11.3px;
+}
