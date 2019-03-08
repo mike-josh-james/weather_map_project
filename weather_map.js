@@ -14,32 +14,25 @@ $(document).ready(function(){
 function returnIcon(icon){
     for(var i = 0; i<=weatherObj.length; i++){
             if(icon === weatherObj[i].condition){
+                $('body, html').css('background-image', weatherObj[i].backPic);
                 return "<img src=" + weatherObj[i].url + ">";
             }
         }
     }
 
-    $("#search-btn").on("click", function(event){
-        lat = $("#input-lat").val();
-        long = $("#input-long").val();
-        url = "https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/" + darkSkyToken + "/" + lat + "," + long;
-        $.get(url).done(function(weather){
-            console.log(weather);
-            getWeather(weather);
-        });
-    });
-
 function getWeather(weather) {
     var html ="";
     for(var i = 0; i <= 2; i++) {
-        html += "<div>";
-        html += weather.daily.data[i].apparentTemperatureHigh + "/";
-        html += weather.daily.data[i].apparentTemperatureLow + "<br>" + returnIcon(weather.daily.data[i].icon) + "<br>";
-        html += weather.daily.data[i].summary + "<br>";
-        html += weather.daily.data[i].humidity + "<br>";
-        html += weather.daily.data[i].windSpeed + "<br>";
-        html += weather.daily.data[i].pressure;
+        html += "<div class='row'>";
+        html += "<div class='col-md-4 box'>";
+        html += '<span class="title">' + 'Temperature High:' + '</span>' + '   ' + weather.daily.data[i].apparentTemperatureHigh + "<br>";
+        html += '<span class="title">' + 'Temperature Low:' + '</span>' + ' ' + weather.daily.data[i].apparentTemperatureLow + "<br>" + '<span id="icon" class="mx-auto">' + returnIcon(weather.daily.data[i].icon) + '</span>' + "<br>";
+        html += "<span id='summery'>" + weather.daily.data[i].summary + "</span>" + "<br>";
+        html += '<span class="title">' + 'Humidity:' + '</span>' + ' ' + weather.daily.data[i].humidity + "<br>";
+        html += '<span class="title">' + 'Wind Speed:' + '</span>' + '   ' + weather.daily.data[i].windSpeed + "<br>";
+        html += '<span class="title">' + 'Pressure:  ' + '</span>' + weather.daily.data[i].pressure;
         html += "</div>";
+        html += "</div";
     }
     $("#weather-layout").html(html)
 
@@ -47,46 +40,56 @@ function getWeather(weather) {
 
 var weatherObj = [ {
         condition: "clear-day",
-        url: "icon/Sun.svg"
+        url: "icon/day.svg",
+        backPic: "url(img/download.jpeg)"
                 },
     {
         condition: "clear-night",
-            url: "icon/Moon.svg"
+            url: "icon/night.svg",
+        backPic: "url(img/clearnight.jpg)"
                 },
     {
         condition: "rain",
-            url: "icon/Umbrella.svg"
+            url: "icon/rainy-6.svg",
+        backPic: "url(img/rain.jpeg)"
                 },
     {
         condition: "snow",
-            url: "icon/Snowflake.svg"
+            url: "icon/snowy-6.svg",
+        backPic: "url(img/snow.webp)"
                 },
     {
         condition: "sleet",
-            url: "icon/Cloud-Hail-Alt.svg"
+            url: "icon/sleet.svg",
+        backPic: "url(img/sleet.jpeg)"
                 },
     {
         condition: "wind",
-            url: "icon/Wind.svg"
+            url: "icon/wind.png",
+        backPic: "url(img/wind.jpeg)"
                 },
     {
         condition: "fog",
-            url: "icon/Cloud-Fog.svg"
+            url: "icon/fog.png",
+        backPic: "url(img/fog.jpeg)"
                 },
     {
         condition: "cloudy",
-            url: "icon/Cloud.svg"
+            url: "icon/cloudy.svg",
+        backPic: "url(img/clouds.jpg)"
                 },
     {
         condition: "partly-cloudy-day",
-            url: "icon/Cloud-Sun.svg"
+            url: "icon/cloudy-day-2.svg",
+        backPic: "url(img/clouds.jpg)"
                 },
     {
         condition:"partly-cloudy-night",
-            url: "icon/Cloud-Moon.svg"
-                },
+            url: "icon/cloudy-night-3.svg",
+        backPic: "url(img/partnight.jpeg)"
+                }
 
-]
+];
 
 
     /** MAP STUFF **/
@@ -101,17 +104,27 @@ var weatherObj = [ {
 
     var search = "The Alamo";
 
-    $("#search-btn").on("click", function(){
+    // words to
+    function toTitleCase(str) {
+        return str.replace(/\w\S*/g, function(txt){
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+    }
+
+    $("#search-btn").on("click", function(e){
+        e.preventDefault();
         var search = $("#search-man").val();
+        $('#header').html(toTitleCase(search));
         geocode(search, mapboxToken).then(function(data) {
+            map.setCenter(data);
             long = data[0].toString();
             lat = data[1].toString();
             url = "https://cors-anywhere.herokuapp.com/https://api.darksky.net/forecast/" + darkSkyToken + "/" + lat + "," + long;
             $.get(url).done(function(weather) {
                 getWeather(weather);
             });
+            $("#search-man").val('');
        })
-
     });
 
     geocode(search, mapboxToken).then(function(data) {
