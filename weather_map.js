@@ -114,7 +114,7 @@ var weatherObj = [ {
     $("#search-btn").on("click", function(e){
         e.preventDefault();
         var search = $("#search-man").val();
-        $('#header').html(toTitleCase(search));
+        $('.city').html(toTitleCase(search));
         geocode(search, mapboxToken).then(function(data) {
             map.setCenter(data);
             long = data[0].toString();
